@@ -19,6 +19,13 @@ A simple code for creating licence plate images and train e2e network based on [
 * run create_train_data.py to create plate image and corresponding labels. This repository also contains the plate generator and can generate thousands of plates.
 * reset the train data path and run train_nn.py to train your model.
 
+## Test your model
+Use test_model.py for testing!!!
+```bash
+python test_model.py <Your Plate image path>
+```
+NOTE: it is better using ./data/train_data/xxx.jpg as testing image.
+
 ## Attention
 * The image size created automatically is 120 * 30, fix the input size when you use the e2e network. You can create and train your own e2e network if you want.  
 * Generate at least 50000 images for training, less may degrade the performance.
