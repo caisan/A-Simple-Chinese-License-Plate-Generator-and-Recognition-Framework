@@ -19,6 +19,12 @@ A simple code for creating licence plate images and train e2e network based on [
 * run create_train_data.py to create plate image and corresponding labels. This repository also contains the plate generator and can generate thousands of plates.
 * reset the train data path and run train_nn.py to train your model.
 
+## Detect chinese plate
+Use detect_plate.py for detecting chinese plate demo !
+```
+python detect_plate.py <Your plate image path>
+```
+
 ## Test your model
 Use test_model.py for testing!!!
 ```bash
