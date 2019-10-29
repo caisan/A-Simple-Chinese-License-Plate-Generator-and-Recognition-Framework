@@ -1,10 +1,5 @@
 import cv2
-
-#Fetch cascade.xml from: https://github.com/zeusees/HyperLPR/blob/master/model/cascade.xml
-watch_cascade = cv2.CascadeClassifier('./cascade.xml')
-
-#Fetch 1.jpg from: https://github.com/zeusees/HyperLPR/blob/master/images_rec/1.jpg
-image = cv2.imread("./1.jpg")
+import sys
  
 def detectPlateRough(image_gray,resize_h = 720,en_scale =1.08 ,top_bottom_padding_rate = 0.05):
         if top_bottom_padding_rate>0.2:
@@ -55,6 +50,16 @@ def computeSafeRegion(shape,bounding_rect):
         if right > max_right:
             right = max_right
         return [left,top,right-left,bottom-top]   
-     
-images = detectPlateRough(image,image.shape[0],top_bottom_padding_rate=0.1)
-cv2.imwrite('./cc_plate.jpg', images)
+
+if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        print("Usage: python test_nn.py <plate_image>")
+        exit(1)
+    img_path = sys.argv[1]
+    #Fetch cascade.xml from: https://github.com/zeusees/HyperLPR/blob/master/model/cascade.xml
+    watch_cascade = cv2.CascadeClassifier('./cascade.xml')
+    #Fetch 1.jpg from: https://github.com/zeusees/HyperLPR/blob/master/images_rec/1.jpg
+    image = cv2.imread(img_path)
+
+    images = detectPlateRough(image,image.shape[0],top_bottom_padding_rate=0.1)
+    cv2.imwrite('./cc_plate.jpg', images)
