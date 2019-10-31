@@ -15,21 +15,35 @@ A simple code for creating licence plate images and train e2e network based on [
 * keras 2.2.0
 * some common packages like numpy and so on.
 
-## Prepare train data
+##Start
+```bash
+git clone https://github.com/caisan/A-Simple-Chinese-License-Plate-Generator-and-Recognition-Framework
+cd A-Simple-Chinese-License-Plate-Generator-and-Recognition-Framework
 ```
+
+## Prepare dir
+```bash
+mkdir -p ./data/train_data
+```
+```bash
+mkdir -p ./data/validate_train_data
+```
+
+## Prepare train data
+```bash
 python create_train_data.py ./data/train_data ./data/train_data/train_data_label.txt 6000
 ```
 Images for trainning will be generated in the dir ``` ./data/train_data```, and the image-label file will be generated in the dir ```./data/train_data/train_data_label.txt```
 batch size is 6000.
 
 ## Prepare validate data
-```
+```bash
 python create_train_data.py ./data/validate_train_data ./data/validate_train_data/validate_train_data.txt 300
 ```
 This process aims to generate images for validate when training.
 
 ## Train
-```
+```bash
 python main.py train -ti ./data/train_data -tl ./data/train_data/train_data_label.txt -vi ./data/validate_train_data -vl ./data/validate_train_data/validate_train_data.txt -b 16 -img-size 200 40 -n 100 -c checkpoints/'weights.{epoch:02d}-{val_loss:.2f}.h5' -log log
 ```
 After training, the model is in dir ```checkpoints```, it will be loaded and for predicting.
@@ -40,11 +54,12 @@ Use test_model.py for testing!
 python test_model.py <Your Plate image path>
 ```
 ~~NOTE: it is better using ./data/train_data/xxx.jpg as testing image.~~
+
 For example you can test the plate image: https://github.com/zeusees/HyperLPR/blob/master/images_rec/1.jpg
 
 ## Detect chinese plate region
 Use detect_plate.py for detecting chinese plate demo !
-```
+```bash
 python detect_plate.py <Your plate image path>
 ```
 After execute detect_plate.py, you will get a image named ./cc_plate.jpg with plate region only.
