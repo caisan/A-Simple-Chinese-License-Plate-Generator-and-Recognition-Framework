@@ -5,7 +5,7 @@ import os
 import pandas as pd
 import pickle
 import cv2
-import sys
+import os
 
 index = {"京": 0, "沪": 1, "津": 2, "渝": 3, "冀": 4, "晋": 5, "蒙": 6, "辽": 7, "吉": 8, "黑": 9, "苏": 10, "浙": 11, "皖": 12,
          "闽": 13, "赣": 14, "鲁": 15, "豫": 16, "鄂": 17, "湘": 18, "粤": 19, "桂": 20, "琼": 21, "川": 22, "贵": 23, "云": 24,
@@ -51,42 +51,51 @@ def gen_sample(genplate_advanced, width, height):
     # img = img.transpose(2, 0, 1)
     return label, name, img
 
-def dump_label_store(label_store, train_label):
-    file = open(train_label, 'w')
-    for k,v in label_store.items():
-        file.write(str(k)+':'+str(v)+'\n')
 
-def genBatch(batchSize, outputPath, train_label):
+def genBatch(batchSize, outputPath):
     if not os.path.exists(outputPath):
         os.makedirs(outputPath)
-    #label_store = []
-    label_store = dict()
+    label_store = []
     for i in range(batchSize):
         print('create num:' + str(i))
-        #label, name, img = gen_sample(genplate_advanced, 120, 30)
-        label, name, img = gen_sample(genplate_advanced, 200, 40)
-        #label_store.append(label)
-        #filename = os.path.join(outputPath, str(i).zfill(4) + ".jpg")
-        filename = os.path.join(outputPath, name + ".jpg")
-        img_name = name + ".jpg"
-        label_store[img_name] = name
+        label, name, img = gen_sample(genplate_advanced, 120, 30)
+        label_store.append(label)
+        filename = os.path.join(outputPath, str(i).zfill(4) + ".jpg")
         # filename = os.path.join(outputPath, label + ".jpg")
         # filename = outputPath + '/' + str(label) + ".jpg"
         # print(filename)
         cv2.imwrite(filename, img)
     # label_store = pd.DataFrame(label_store)
-    #np.savetxt('label.txt', label_store)
-    dump_label_store(label_store, train_label)
+    np.savetxt('label.txt', label_store)
     # label_store.to_csv('label.txt')
 
 
-if __name__ == "__main__":
-    if len(sys.argv) < 4:
-        print("Usage: python create_train_data.py <image_path> <img_label_path> <batchSize>")
-    img_path = sys.argv[1]
-    batchSize = sys.argv[3]
-    font_ch = './font/platech.ttf'
-    font_en = './font/platechar.ttf'
-    bg_dir = './NoPlates'
-    genplate_advanced = GenPlate(font_ch, font_en, bg_dir)
-    genBatch(batchSize=batchSize, outputPath=img_path, train_label=sys.argv[2])
+batchSize = 5000
+path = './data/train_data'
+font_ch = './font/platech.ttf'
+font_en = './font/platechar.ttf'
+bg_dir = './NoPlates'
+genplate_advanced = GenPlate(font_ch, font_en, bg_dir)
+genBatch(batchSize=batchSize, outputPath=path)
+
+# create train label
+a = np.loadtxt('label.txt')
+b = np.zeros([batchSize, 65])
+for i in range(batchSize):
+    for j in range(7):
+        b[i, int(a[i, j])] = int(a[i, j])
+
+# create image train data
+img_data = np.zeros([batchSize, 30, 120, 3])
+for i in range(batchSize):
+    img_path = path + '/' + str(i).zfill(4) + ".jpg"
+    img_temp = cv2.imread(img_path)
+    img_temp = np.reshape(img_temp, (30, 120, 3))
+    img_data[i, :, :, :] = img_temp
+
+
+print(b)
+output = open('train_data.pkl', 'wb')
+pickle.dump(img_data, output)
+# output = open('train_label.pkl', 'wb')
+# pickle.dump(b, output)
